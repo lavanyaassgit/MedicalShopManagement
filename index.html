@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare - Pharmacy Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-prescription-bottle-alt"></i>
+                <h1>MediCare</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="#" data-section="inventory"><i class="fas fa-boxes"></i> Inventory</a></li>
+                    <li><a href="#" data-section="sales"><i class="fas fa-shopping-cart"></i> Sales</a></li>
+                    <li><a href="#" data-section="customers"><i class="fas fa-users"></i> Customers</a></li>
+                    <li><a href="#" data-section="suppliers"><i class="fas fa-truck"></i> Suppliers</a></li>
+                    <li><a href="#" data-section="reports"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                </ul>
+            </nav>
+            <div class="user-profile">
+                <img src="admin.jpg" alt="User">
+                <span>Admin</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </header>
+
+        <main>
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <div class="card-icon bg-blue">
+                            <i class="fas fa-pills"></i>
+                        </div>
+                        <div class="card-info">
+                            <h3>Total Products</h3>
+                            <p id="total-products">0</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon bg-green">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="card-info">
+                            <h3>Today's Sales</h3>
+                            <p id="today-sales">0</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon bg-orange">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="card-info">
+                            <h3>Low Stock</h3>
+                            <p id="low-stock">0</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon bg-purple">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="card-info">
+                            <h3>Total Customers</h3>
+                            <p id="total-customers">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-charts">
+                    <div class="chart-container">
+                        <h3>Monthly Sales</h3>
+                        <canvas id="sales-chart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Inventory Status</h3>
+                        <canvas id="inventory-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="recent-activity">
+                    <h3>Recent Activity</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Activity</th>
+                                <th>User</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activity-table">
+                            <!-- Filled by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Inventory Section -->
+            <section id="inventory" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-boxes"></i> Inventory Management</h2>
+                    <button class="btn btn-primary" id="add-product-btn"><i class="fas fa-plus"></i> Add Product</button>
+                </div>
+
+                <div class="search-filter">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="inventory-search" placeholder="Search products...">
+                    </div>
+                    <select id="category-filter">
+                        <option value="">All Categories</option>
+                        <option value="medicine">Medicine</option>
+                        <option value="supplement">Supplement</option>
+                        <option value="equipment">Equipment</option>
+                        <option value="personal-care">Personal Care</option>
+                    </select>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Batch No.</th>
+                                <th>Expiry Date</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-table">
+                            <!-- Filled by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Add Product Modal -->
+                <div id="product-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h3 id="modal-title">Add New Product</h3>
+                        <form id="product-form">
+                            <input type="hidden" id="product-id">
+                            <div class="form-group">
+                                <label for="product-name">Product Name</label>
+                                <input type="text" id="product-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="product-category">Category</label>
+                                <select id="product-category" required>
+                                    <option value="">Select Category</option>
+                                    <option value="medicine">Medicine</option>
+                                    <option value="supplement">Supplement</option>
+                                    <option value="equipment">Equipment</option>
+                                    <option value="personal-care">Personal Care</option>
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="batch-number">Batch Number</label>
+                                    <input type="text" id="batch-number" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="expiry-date">Expiry Date</label>
+                                    <input type="date" id="expiry-date" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="purchase-price">Purchase Price</label>
+                                    <input type="number" id="purchase-price" step="0.01" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="selling-price">Selling Price</label>
+                                    <input type="number" id="selling-price" step="0.01" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="quantity">Quantity</label>
+                                    <input type="number" id="quantity" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="reorder-level">Reorder Level</label>
+                                    <input type="number" id="reorder-level" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea id="description" rows="3"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" id="cancel-product">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Save Product</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sales Section -->
+            <section id="sales" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-shopping-cart"></i> Sales Management</h2>
+                    <button class="btn btn-primary" id="new-sale-btn"><i class="fas fa-plus"></i> New Sale</button>
+                </div>
+
+                <div class="search-filter">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="sales-search" placeholder="Search sales...">
+                    </div>
+                    <div class="date-range">
+                        <input type="date" id="start-date">
+                        <span>to</span>
+                        <input type="date" id="end-date">
+                        <button class="btn btn-secondary" id="filter-sales">Filter</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Invoice No.</th>
+                                <th>Date</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Payment</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sales-table">
+                            <!-- Filled by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- New Sale Modal -->
+                <div id="sale-modal" class="modal">
+                    <div class="modal-content wide-modal">
+                        <span class="close">&times;</span>
+                        <h3>New Sale</h3>
+                        <div class="sale-container">
+                            <div class="sale-products">
+                                <div class="search-box">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" id="product-search" placeholder="Search products...">
+                                </div>
+                                <div class="product-list" id="product-list">
+                                    <!-- Filled by JavaScript -->
+                                </div>
+                            </div>
+                            <div class="sale-summary">
+                                <div class="customer-info">
+                                    <h4>Customer Information</h4>
+                                    <div class="form-group">
+                                        <label for="customer-select">Select Customer</label>
+                                        <select id="customer-select">
+                                            <option value="">Walk-in Customer</option>
+                                            <!-- Filled by JavaScript -->
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-secondary" id="new-customer-btn">New Customer</button>
+                                </div>
+                                <div class="cart-items">
+                                    <h4>Cart Items</h4>
+                                    <div class="cart-list" id="cart-list">
+                                        <!-- Filled by JavaScript -->
+                                    </div>
+                                </div>
+                                <div class="payment-summary">
+                                    <div class="summary-row">
+                                        <span>Subtotal:</span>
+                                        <span id="subtotal">$0.00</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <label for="discount">Discount:</label>
+                                        <input type="number" id="discount" value="0" min="0">
+                                    </div>
+                                    <div class="summary-row">
+                                        <span>Tax (5%):</span>
+                                        <span id="tax">$0.00</span>
+                                    </div>
+                                    <div class="summary-row total">
+                                        <span>Total:</span>
+                                        <span id="total">$0.00</span>
+                                    </div>
+                                    <div class="payment-methods">
+                                        <label>Payment Method:</label>
+                                        <div class="methods">
+                                            <label><input type="radio" name="payment" value="cash" checked> Cash</label>
+                                            <label><input type="radio" name="payment" value="card"> Card</label>
+                                            <label><input type="radio" name="payment" value="upi"> UPI</label>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary" id="complete-sale">Complete Sale</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New Customer Modal -->
+                <div id="customer-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h3>Add New Customer</h3>
+                        <form id="customer-form">
+                            <div class="form-group">
+                                <label for="customer-name">Full Name</label>
+                                <input type="text" id="customer-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="customer-phone">Phone Number</label>
+                                <input type="tel" id="customer-phone" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="customer-email">Email</label>
+                                <input type="email" id="customer-email">
+                            </div>
+                            <div class="form-group">
+                                <label for="customer-address">Address</label>
+                                <textarea id="customer-address" rows="2"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" id="cancel-customer">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Save Customer</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Customers Section -->
+            <section id="customers" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-users"></i> Customer Management</h2>
+                    <button class="btn btn-primary" id="add-customer-btn"><i class="fas fa-plus"></i> Add Customer</button>
+                </div>
+
+                <div class="search-filter">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="customer-search" placeholder="Search customers...">
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Address</th>
+                                <th>Total Purchases</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customers-table">
+                            <!-- Filled by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Suppliers Section -->
+            <section id="suppliers" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-truck"></i> Supplier Management</h2>
+                    <button class="btn btn-primary" id="add-supplier-btn"><i class="fas fa-plus"></i> Add Supplier</button>
+                </div>
+
+                <div class="search-filter">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="supplier-search" placeholder="Search suppliers...">
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Company</th>
+                                <th>Contact Person</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Products Supplied</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="suppliers-table">
+                            <!-- Filled by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Add Supplier Modal -->
+                <div id="supplier-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h3 id="supplier-modal-title">Add New Supplier</h3>
+                        <form id="supplier-form">
+                            <input type="hidden" id="supplier-id">
+                            <div class="form-group">
+                                <label for="supplier-company">Company Name</label>
+                                <input type="text" id="supplier-company" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="supplier-contact">Contact Person</label>
+                                <input type="text" id="supplier-contact" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="supplier-phone">Phone</label>
+                                <input type="tel" id="supplier-phone" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="supplier-email">Email</label>
+                                <input type="email" id="supplier-email">
+                            </div>
+                            <div class="form-group">
+                                <label for="supplier-address">Address</label>
+                                <textarea id="supplier-address" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="supplier-products">Products Supplied</label>
+                                <textarea id="supplier-products" rows="2" placeholder="Comma separated list of products"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" id="cancel-supplier">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Save Supplier</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="content-section">
+                <h2><i class="fas fa-chart-bar"></i> Reports</h2>
+                
+                <div class="report-filters">
+                    <div class="filter-group">
+                        <label for="report-type">Report Type:</label>
+                        <select id="report-type">
+                            <option value="sales">Sales Report</option>
+                            <option value="inventory">Inventory Report</option>
+                            <option value="expiry">Expiry Report</option>
+                            <option value="customer">Customer Report</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="report-period">Period:</label>
+                        <select id="report-period">
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month" selected>This Month</option>
+                            <option value="quarter">This Quarter</option>
+                            <option value="year">This Year</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    <div class="filter-group custom-date" style="display: none;">
+                        <label for="report-start">From:</label>
+                        <input type="date" id="report-start">
+                        <label for="report-end">To:</label>
+                        <input type="date" id="report-end">
+                    </div>
+                    <button class="btn btn-primary" id="generate-report">Generate Report</button>
+                    <button class="btn btn-secondary" id="export-report"><i class="fas fa-download"></i> Export</button>
+                </div>
+
+                <div class="report-results">
+                    <div id="sales-report" class="report-content">
+                        <h3>Sales Report</h3>
+                        <div class="chart-container">
+                            <canvas id="sales-report-chart"></canvas>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Invoice No.</th>
+                                        <th>Customer</th>
+                                        <th>Items</th>
+                                        <th>Subtotal</th>
+                                        <th>Discount</th>
+                                        <th>Tax</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sales-report-table">
+                                    <!-- Filled by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="inventory-report" class="report-content" style="display: none;">
+                        <h3>Inventory Report</h3>
+                        <div class="chart-container">
+                            <canvas id="inventory-report-chart"></canvas>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Product ID</th>
+                                        <th>Product Name</th>
+                                        <th>Category</th>
+                                        <th>Current Stock</th>
+                                        <th>Price</th>
+                                        <th>Value</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventory-report-table">
+                                    <!-- Filled by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="expiry-report" class="report-content" style="display: none;">
+                        <h3>Expiry Report</h3>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Product ID</th>
+                                        <th>Product Name</th>
+                                        <th>Batch No.</th>
+                                        <th>Expiry Date</th>
+                                        <th>Days Left</th>
+                                        <th>Current Stock</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="expiry-report-table">
+                                    <!-- Filled by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="customer-report" class="report-content" style="display: none;">
+                        <h3>Customer Report</h3>
+                        <div class="chart-container">
+                            <canvas id="customer-report-chart"></canvas>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Customer ID</th>
+                                        <th>Customer Name</th>
+                                        <th>Phone</th>
+                                        <th>Total Purchases</th>
+                                        <th>Last Purchase</th>
+                                        <th>Average Purchase</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customer-report-table">
+                                    <!-- Filled by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
